@@ -3,8 +3,12 @@ package api
 import (
 	"fmt"
 	"net/http"
+
+	"github.com/rs/zerolog/log"
 )
 
-func ExampleHamdler(w http.ResponseWriter, r *http.Request) {
+func ExampleHandler(w http.ResponseWriter, r *http.Request) {
+	log.Info().Msg("insideeeeeeeeeee")
+
 	fmt.Fprintf(w, "hello haiiii")
 }

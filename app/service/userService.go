@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"net/http"
 	"pjt1/app/dto"
+	helper "pjt1/app/helper"
 	"pjt1/app/repo"
 	"pjt1/pkg/e"
 	"pjt1/pkg/jwt"
@@ -14,6 +15,7 @@ import (
 type UserService interface {
 	SaveUserDetails(r *http.Request) (*dto.SaveUserResponse, error)
 	LoginUser(r *http.Request) (*dto.LoginResponse, error)
+	ExampleHandler(r *http.Request) error
 }
 
 type userServiceImpl struct {
@@ -74,7 +76,6 @@ func (s *userServiceImpl) LoginUser(r *http.Request) (*dto.LoginResponse, error)
 	if err != nil {
 		return nil, e.NewError(e.ErrResourceNotFound, "user not found", err)
 	}
-	log.Info().Msg("the user is")
 
 	// Check if user is nil
 	if user == nil {
@@ -87,17 +88,35 @@ func (s *userServiceImpl) LoginUser(r *http.Request) (*dto.LoginResponse, error)
 		err := fmt.Errorf("invalid password for user %s", user.Username)
 		return nil, e.NewError(e.ErrDecodeRequestBody, "invalid password", err)
 	}
-	log.Info().Msg("password isssssssssssss")
 
 	// Generating JWT Token
-	token, err := jwt.GenerateToken(user.ID, user.Username) // Include userid and username in the token
+	token, err := jwt.GenerateToken(user.ID, user.Username) //userid and username in the token
 	if err != nil {
 		return nil, e.NewError(e.ErrInternalServer, "failed to generate token", err)
 	}
 
-	fmt.Printf("the token is %s /n:", token)
+	fmt.Printf("the token is %s : \n ", token)
 
 	return &dto.LoginResponse{
 		Token: token,
 	}, nil
+}
+
+func (s *userServiceImpl) ExampleHandler(r *http.Request) error {
+
+	userID, err := helper.GetUserIDFromContext(r.Context())
+	if err != nil {
+		return err
+	}
+
+	// You can also get the username if needed
+	username, err := helper.GetUsernameFromContext(r.Context())
+	if err != nil {
+		return err
+	}
+
+	// userID or username
+	fmt.Printf("UserID: %d, Username: %s\n", userID, username)
+
+	return nil
 }

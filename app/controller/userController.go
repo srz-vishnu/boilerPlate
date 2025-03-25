@@ -10,6 +10,7 @@ import (
 type UserController interface {
 	SaveUserDetails(w http.ResponseWriter, r *http.Request)
 	LoginUser(w http.ResponseWriter, r *http.Request)
+	ExampleHandler(w http.ResponseWriter, r *http.Request)
 }
 
 type UserControllerImpl struct {
@@ -40,4 +41,14 @@ func (c *UserControllerImpl) LoginUser(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 	api.Success(w, http.StatusOK, resp)
+}
+
+func (c *UserControllerImpl) ExampleHandler(w http.ResponseWriter, r *http.Request) {
+	err := c.userService.ExampleHandler(r)
+	if err != nil {
+		apiErr := e.NewAPIError(err, "failed to login user")
+		api.Fail(w, apiErr.StatusCode, apiErr.Code, apiErr.Message, err.Error())
+		return
+	}
+	api.Success(w, http.StatusOK, "resp")
 }
