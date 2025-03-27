@@ -24,7 +24,7 @@ func JWTAuthMiddleware(next http.Handler) http.Handler {
 			return
 		}
 
-		// Extract the token part (removing 'Bearer ' prefix) //have 2 part bearer part venda
+		// Extract the token part (removing 'Bearer ' prefix) //have 2 part we wont take bearer part 
 		tokenString := strings.TrimPrefix(authHeader, "Bearer ")
 		if tokenString == authHeader {
 			api.Fail(w, http.StatusUnauthorized, 401, "Invalid token format", "")

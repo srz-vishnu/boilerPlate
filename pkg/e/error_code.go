@@ -17,6 +17,15 @@ const (
 
 	// ErrValidateRequest : error when validating the request
 	ErrValidateRequest
+
+	// ErrSaveUserDetails : error when saving user details
+	ErrSaveUserDetails
+
+	// ErrSaveUserDetails : error when saving user details
+	ErrInvaliPassword
+
+	// ErrTokenNotGenerated : error when getting author by id
+	ErrTokenNotGenerated
 )
 
 // 404 errors

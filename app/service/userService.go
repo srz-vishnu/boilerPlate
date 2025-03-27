@@ -4,7 +4,6 @@ import (
 	"fmt"
 	"net/http"
 	"pjt1/app/dto"
-	helper "pjt1/app/helper"
 	"pjt1/app/repo"
 	"pjt1/pkg/e"
 	"pjt1/pkg/jwt"
@@ -15,7 +14,7 @@ import (
 type UserService interface {
 	SaveUserDetails(r *http.Request) (*dto.SaveUserResponse, error)
 	LoginUser(r *http.Request) (*dto.LoginResponse, error)
-	ExampleHandler(r *http.Request) error
+	//ExampleHandler(r *http.Request) error
 }
 
 type userServiceImpl struct {
@@ -46,7 +45,7 @@ func (s *userServiceImpl) SaveUserDetails(r *http.Request) (*dto.SaveUserRespons
 
 	userID, err := s.userRepo.SaveUserDetails(args)
 	if err != nil {
-		return nil, e.NewError(e.ErrExecuteSQL, "error while creating user", err)
+		return nil, e.NewError(e.ErrSaveUserDetails, "error while creating user", err)
 	}
 	log.Info().Msgf("Successfully created user with id %d", userID)
 
@@ -86,13 +85,13 @@ func (s *userServiceImpl) LoginUser(r *http.Request) (*dto.LoginResponse, error)
 	// Validate password
 	if user.Password != args.Password {
 		err := fmt.Errorf("invalid password for user %s", user.Username)
-		return nil, e.NewError(e.ErrDecodeRequestBody, "invalid password", err)
+		return nil, e.NewError(e.ErrInvaliPassword, "invalid password", err)
 	}
 
 	// Generating JWT Token
 	token, err := jwt.GenerateToken(user.ID, user.Username) //userid and username in the token
 	if err != nil {
-		return nil, e.NewError(e.ErrInternalServer, "failed to generate token", err)
+		return nil, e.NewError(e.ErrTokenNotGenerated, "failed to generate token", err)
 	}
 
 	fmt.Printf("the token is %s : \n ", token)
@@ -102,21 +101,21 @@ func (s *userServiceImpl) LoginUser(r *http.Request) (*dto.LoginResponse, error)
 	}, nil
 }
 
-func (s *userServiceImpl) ExampleHandler(r *http.Request) error {
+// func (s *userServiceImpl) ExampleHandler(r *http.Request) error {
 
-	userID, err := helper.GetUserIDFromContext(r.Context())
-	if err != nil {
-		return err
-	}
+// 	userID, err := helper.GetUserIDFromContext(r.Context())
+// 	if err != nil {
+// 		return err
+// 	}
 
-	// You can also get the username if needed
-	username, err := helper.GetUsernameFromContext(r.Context())
-	if err != nil {
-		return err
-	}
+// 	// You can also get the username if needed
+// 	username, err := helper.GetUsernameFromContext(r.Context())
+// 	if err != nil {
+// 		return err
+// 	}
 
-	// userID or username
-	fmt.Printf("UserID: %d, Username: %s\n", userID, username)
+// 	// userID or username
+// 	fmt.Printf("UserID: %d, Username: %s\n", userID, username)
 
-	return nil
-}
+// 	return nil
+// }
